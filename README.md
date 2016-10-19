@@ -20,8 +20,8 @@ Build a map-based application, which lets the user see geo-based data on a map a
 
 Fill in (either in English, or in Slovak):
 
-**Application description**: `<fill in>`
+**Application description**: Cieľom je vytvoriť interaktívnu webovú aplikáciu, ktorá bude používateľom umožňovať automaticky vygenerovať harmonogram výletu v zadanej lokalite podľa dĺžky ich pobytu a ich preferencií (ako napr. typy atrakcií, ceny a pod.). Aplikácia nájde atrakcie dostupné v danej lokalite, overí ich otváracie hodiny, podľa typu atrakcie určí približné trvanie jej návštevy a zostaví časový harmonogram výletu s odporúčanými atrakciami, pričom používateľovi umožní si ho ďalej prispôsobiť. 
 
-**Data source**: `<fill in>`
+**Data source**: Open Street Maps
 
-**Technologies used**: `<fill in>`
+**Technologies used**: PHP, PostgreSQL + PostGIS, MapBox, HTML5 + CSS3 + jQuery + Bootstrap
