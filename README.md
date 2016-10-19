@@ -22,6 +22,6 @@ Fill in (either in English, or in Slovak):
 
 **Application description**: Cieľom je vytvoriť interaktívnu webovú aplikáciu, ktorá bude používateľom umožňovať automaticky vygenerovať harmonogram výletu v zadanej lokalite podľa dĺžky ich pobytu a ich preferencií (ako napr. typy atrakcií, ceny a pod.). Aplikácia nájde atrakcie dostupné v danej lokalite, overí ich otváracie hodiny, podľa typu atrakcie určí približné trvanie jej návštevy a zostaví časový harmonogram výletu s odporúčanými atrakciami, pričom používateľovi umožní si ho ďalej prispôsobiť. 
 
-**Data source**: Open Street Maps
+**Data source**: Open Street Maps, otvaracie-hodiny.sk
 
 **Technologies used**: PHP, PostgreSQL + PostGIS, MapBox, HTML5 + CSS3 + jQuery + Bootstrap
