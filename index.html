@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>PDT Assignment - Anton Ján Vrban</title>
+
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.css' rel='stylesheet'/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href='styles/pdt.css' rel='stylesheet'/>
+
+</head>
+
+<body>
+<div id='sidebar'>
+    <h1>Plánovač výletu</h1>
+    <div class="row">
+        <div class="col-sm-12">
+            <form id="search" action="#">
+                <h2>Lokalita</h2>
+                <div class="form-group has-feedback">
+                    <label for="lokalita">Názov lokality</label>
+                    <input type="text" class="form-control" id="lokalita" data-provide="typeahead" autocomplete="off"
+                           required placeholder="Zadajte názov mesta alebo okresu">
+                    <i class="glyphicon glyphicon-map-marker form-control-feedback"></i>
+                </div>
+                <div class="form-group has-feedback">
+                    <label for="lokalita">Max. vzdialenosť od zvolenej lokality (km)</label>
+                    <input type="number" class="form-control" id="vzdialenost" value="5" required min="0">
+                    <i class="glyphicon glyphicon-fullscreen form-control-feedback"></i>
+                </div>
+                <h2>Termín</h2>
+                <div class="form-group has-feedback">
+                    <label for="datum">Dátum</label>
+                    <input type="date" class="form-control" id="datum" required>
+                    <i class="glyphicon glyphicon-calendar form-control-feedback"></i>
+                </div>
+                <h2>Typy atrakcií</h2>
+                <div class="row checkbox">
+                    <div class="col-sm-5">
+                        <label><input type="checkbox" name="typy[]" value="muzea"> Múzeá</label>
+                        <label><input type="checkbox" name="typy[]" value="pamiatky"> Pamiatky</label>
+                        <label><input type="checkbox" name="typy[]" value="priroda"> Príroda</label>
+                        <label><input type="checkbox" name="typy[]" value="parky"> Parky</label>
+                        <label><input type="checkbox" name="typy[]" value="plavby"> Plavby</label>
+                        <label><input type="checkbox" name="typy[]" value="aquaparky"> Aquaparky</label>
+                    </div>
+                    <div class="col-sm-6">
+                        <label><input type="checkbox" name="typy[]" value="sportoviska"> Športoviská</label>
+                        <label><input type="checkbox" name="trate[]" value="lyzovanie"> Lyžiarske strediská</label>
+                        <label><input type="checkbox" name="trate[]" value="turisticke"> Turistické chodníky</label>
+                        <label><input type="checkbox" name="trate[]" value="cyklisticke"> Cyklistické trate</label>
+                        <label><input type="checkbox" name="trate[]" value="bezkarske"> Bežkárske trate</label>
+                        <label><input type="checkbox" name="trate[]" value="horolezecke"> Horolezecké trate</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label><input type="checkbox" value="muzea" id="hodiny"> Zisťovať otváracie hodiny</label>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-lg btn-primary" data-loading-text="Vyhľadáva sa..." id="submitbtn">
+                    Hľadať
+                </button>
+            </form>
+            <div id="list"></div>
+        </div>
+    </div>
+</div>
+
+<div id='map'></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.js'></script>
+<script src="//netsh.pp.ua/upwork-demo/1/js/typeahead.js"></script>
+<script src='scripts/map.js'></script>
+<script src='scripts/pdt.js'></script>
+</body>
+</html>
