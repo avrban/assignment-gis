@@ -1,62 +1,94 @@
-*This is a documentation for a fictional project, just to show you what I expect. Notice a few key properties:*
-- *no cover page, really*
-- *no copy&pasted assignment text*
-- *no code samples*
-- *concise, to the point, gets me a quick overview of what was done and how*
-- *I don't really care about the document length*
-- *I used links where appropriate*
+# Úvod
 
-# Overview
+Táto aplikácia slúži pre vyhľadávanie turistických atrakcií podľa používateľom zadaných preferencií.
+Aplikácia poskytuje tieto funkcie:
+- výber lokality (mesta, okresu) v ktorom sa má hľadať a maximálnej vzdialenosti od tohto miesta s automatickým dopľňaním názvu lokality
+- výber turistických atrakcií podľa typov (múzeá, športoviská, cyklistické chodníky a pod.)
+- možnosť zvolenia dátumu výletu a načítania otváracích hodín atrakcií z portálu [otvaracie-hodiny.sk](http://www.otvaracie-hodiny.sk)
+- zobrazenie nájdených atrakcií na mape spolu s prehľadným zoznamom v sidebare:
+  - so zobrazením jej:
+    - názvu 
+    - vzdialenosti od zvolenej lokality
+    - otváracích hodín podľa dátumu (pri podporovaných atrakciách)
+    - dĺžky (v prípade, že sa jedná o chodník alebo trasu)
+  - po kliknutí na položku zoznamu sa mapa presunie a priblíži na danú atrakciu
 
-This application shows hotels in Bratislava on a map. Most important features are:
-- search by proximity to my current location
-- search by hotel name
-- intelligent ordering - by proximity and by hotel features
-- hotels on the map are color coded by their quality assigned in stars (standard)
+#### Vyhľadávanie:
+![Screenshot](screenshot_vyhladavanie.png)
 
-This is it in action:
+#### Výsledky vyhľadávania:
+![Screenshot](screenshot_vysledky.png)
 
-![Screenshot](screenshot.png)
-
-The application has 2 separate parts, the client which is a [frontend web application](#frontend) using mapbox API and mapbox.js and the [backend application](#backend) written in [Rails](http://rubyonrails.org/), backed by PostGIS. The frontend application communicates with backend using a [REST API](#api).
+Apikácia sa skladá z [používateľského rozhrania](#frontend), ktoré zobrazuje mapu a vyhľadávací formulár a [backendu](#backend), ktorý vykonáva dopyty nad databázou a realizuje [aplikačné rozhranie](#api), prostredníctvom ktorého tieto dve časti komunikujú.
 
 # Frontend
 
-The frontend application is a static HTML page (`index.html`), which shows a mapbox.js widget. It is displaying hotels, which are mostly in cities, thus the map style is based on the Emerald style. I modified the style to better highlight main sightseeing points, restaurants and bus stops, since they are all important when selecting a hotel. I also highlighted rails tracks to assist in finding a quiet location.
+Používateľské rozhranie je realizované formou statického HTML dokumentu (`index.html`). Pre lepšiu interakciu s používateľom využíva knižnicu [jQuery](https://jquery.com/) a framework [Bootstrap](http://getbootstrap.com/). 
 
-All relevant frontend code is in `application.js` which is referenced from `index.html`. The frontend code is very simple, its only responsibilities are:
-- detecting user's location, using the standard [web location API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation)
-- displaying the sidebar panel with hotel list and filtering controls, driving the user interaction and calling the appropriate backend APIs
-- displaying geo features by overlaying the map with a geojson layer, the geojson is provided directly by backend APIs
+Mapa je zobrazovaná prostredníctvom pluginu [MapBox](http://www.mapbox.com). Súbor (`scripts/map.js`) obsahuje vlastné definície zdrojov a vrstiev, ktoré aplikácia na mape zobrazuje. Pri vyhľadávaní sa oblasť zvolenej lokality vyfarbí pozadím, atrakcie sa na mape zobrazia spolu s ich názvom a ikonou (podľa typu atrakcie) a turistické chodníky či trate sa vyfarbia zelenou farbou.
+
+V súbore (`scripts/pdt.js`) sa nachádzajú metódy pre volanie [aplikačného rozhrania](#api) a spracovanie prijatých výsledkov, vrátane ich zobrazenia v bočnom paneli spolu s ďalšími údajmi. 
 
 # Backend
 
-The backend application is written in Ruby on Rails and is responsible for querying geo data, formatting the geojson and data for the sidebar panel.
+Backendová aplikácia je napísaná v jazyku [PHP 5.6](http://www.php.net) a nachádza sa v súbore (`api/api.php`). Podľa prijatých požiadaviek z [frontendu](#frontend) vykonáva dopyty nad [PostgreSQL](https://www.postgresql.org) databázou a výsledky vracia v JSON formáte.
+
+V prípade, že si používateľ zvolí funkciu vyhľadávania otváracích hodín atrakcií, volá sa funkcia súboru (`api/oh_parser.php`). Táto prostredníctvom pluginu [PHP Simple HTML DOM Parser
+](http://simplehtmldom.sourceforge.net) vyhľadá na portáli [otvaracie-hodiny.sk](http://www.otvaracie-hodiny.sk) danú atrakciu, a ak je nájdená, podľa dňa týždňa (získaného z používateľom zadaného dátumu výletu) nájde zodpovedajúce otváracie hodiny, ktoré vráti.
 
 ## Data
 
-Hotel data is coming directly from Open Street Maps. I downloaded an extent covering whole Slovakia (around 1.2GB) and imported it using the `osm2pgsql` tool into the standard OSM schema in WGS 84 with hstore enabled. To speedup the queries I created an index on geometry column (`way`) in all tables. The application follows standard Rails conventions and all queries are placed in models inside `app/models`, mostly in `app/models/hotel.rb`. GeoJSON is generated by using a standard `st_asgeojson` function, however some postprocessing is necessary (in `app/controllers/search_controller.rb`) in order to merge all hotels into a single geojson.
+Používané dáta boli stiahnuté prostredníctvom exportovacieho nástroja z [OpenStreetMap](https://www.openstreetmap.org). Aplikácia bola testovaná na dátach pokrývajúcich časť okresov Liptovský Mikuláš a Poprad (z dôvodu vysokého počtu turistických atrakcií).
+
+Na konverziu stiahnutých dát do databázy som využil nástroj `osm2pgsql` s prepínačom `-l`, aby som sa vyhol používaniu funkcie `ST_Transform` v dopytoch, nakoľko MapBox využíva projekciu WGS 84, zatiaľ čo `osm2pgsql` predvolene projekciu 600613.
+ 
+Okrem štandardných indexov nad tabuľkami vytvorených nástrojom `osm2pgsql` som vytvoril index nad stĺpcami `boundary` a `lower(name)` tabuľky `planet_osm_polygon`, pre rýchle načítavanie zoznamu miest a okresov využívané pri automatickom dopĺňaní pri zadávaní lokality.
+
+Po analýze databázových dopytov som vytvoril indexy taktiež nad stĺpcami `leisure` a `tourism` tabuliek `planet_osm_polygon` a `planet_osm_point` a nad stĺpcom `route` tabuľky `planet_osm_line`.   
 
 ## Api
 
-**Find hotels in proximity to coordinates**
+Aplikačné rozhranie príjma dopyty zaslané prostredníctvom metódy `POST`.  
 
-`GET /search?lat=25346&long=46346123`
+**Príklad**
 
-**Find hotels by name, sorted by proximity and quality**
-
-`GET /search?name=hviezda&lat=25346&long=46346123`
-
-### Response
-
-API calls return json responses with 2 top-level keys, `hotels` and `geojson`. `hotels` contains an array of hotel data for the sidebar, one entry per matched hotel. Hotel attributes are (mostly self-evident):
+Nájdenie atrakcií typu "Plavby" v lokalite Bobrovník a okolia 5 km v dátume 20.11.2016 s načítaním otváracích hodín:
 ```
-{
-  "name": "Modra hviezda",
-  "style": "modern", # cuisine style
-  "stars": 3,
-  "address": "Panska 31"
-  "image_url": "/assets/hotels/652.png"
+POST api/api.php
+{ 
+    "get_attractions": true,
+    "lokalita": "Bobrovnik",
+    "vzdialenost": 5,
+    "datum": "20.11.2016",
+    "hodiny": true,
+    "typy": {"plavby"}
 }
 ```
-`geojson` contains a geojson with locations of all matched hotels and style definitions.
+
+### Odpoveď
+
+Aplikačné rozhranie vráti odpoveď v JSON formáte, ktorý priamo používa MapBox pre reprezentáciu zdroja dát.
+```
+{ 
+    "type": "FeatureCollection", 
+    "features": 
+        [
+            { 
+                "type": "Feature", 
+                "geometry": {"type":"Polygon","coordinates":[[[19.4792774,49.1187196],[19.4802564,49.1189741],[19.4804817,49.1190356],[19.480589,49.1188899],[19.480353,49.1188302],[19.4805756,49.1185072],[19.480404,49.1184528],[19.4801572,49.1187881],[19.479382,49.1185756],[19.4792774,49.1187196]]]},
+                "properties": 
+                {
+                    "name": "Marina",
+                    "centroidX": "19.4800472150364",
+                    "centroidY": "49.118764467452",
+                    "distance": "0",
+                    "hours": "8.30 - 17.00",
+                    "leisure": "marina",
+                    "tourism": ""
+                }
+            }
+        ]
+}
+```
+
+Údaje v poli `properties` sú využívané nie len pre zobrazenie v mape, ale aj pre bočný panel aplikácie. 

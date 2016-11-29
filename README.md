@@ -20,8 +20,10 @@ Build a map-based application, which lets the user see geo-based data on a map a
 
 Fill in (either in English, or in Slovak):
 
-**Application description**: Cieľom je vytvoriť interaktívnu webovú aplikáciu, ktorá bude používateľom umožňovať automaticky vygenerovať harmonogram výletu v zadanej lokalite podľa dĺžky ich pobytu a ich preferencií (ako napr. typy atrakcií, ceny a pod.). Aplikácia nájde atrakcie dostupné v danej lokalite, overí ich otváracie hodiny, podľa typu atrakcie určí približné trvanie jej návštevy a zostaví časový harmonogram výletu s odporúčanými atrakciami, pričom používateľovi umožní si ho ďalej prispôsobiť. 
+**Application description**: Cieľom bolo vytvoriť interaktívnu webovú aplikáciu, ktorá bude používateľom umožňovať automaticky vygenerovať harmonogram výletu v zadanej lokalite podľa dĺžky ich pobytu a ich preferencií (ako napr. typy atrakcií, ceny a pod.). Aplikácia nájde atrakcie dostupné v danej lokalite, overí ich otváracie hodiny, podľa typu atrakcie určí približné trvanie jej návštevy a zostaví časový harmonogram výletu s odporúčanými atrakciami, pričom používateľovi umožní si ho ďalej prispôsobiť. Z dôvodu veľkej náročnosti daného zadania, ako aj neexistencie lepšieho zdroja pre získavanie otváracích hodín atrakcií na Slovensku (použitý zdroj ich obsahuje len málo) bola aplikácia upravená tak, že používateľovi nevytvára harmonogram, ale len zobrazuje nájdené atrakcie podľa jeho preferencií a s otváracími hodinami u vybraných atrakcií.
+
 
 **Data source**: Open Street Maps, otvaracie-hodiny.sk
 
-**Technologies used**: PHP, PostgreSQL + PostGIS, MapBox, HTML5 + CSS3 + jQuery + Bootstrap
+**Technologies used**: PHP, PostgreSQL + PostGIS, MapBox, HTML5 + CSS3 + jQuery + Bootstrap, PHP Simple HTML DOM Parser
+
